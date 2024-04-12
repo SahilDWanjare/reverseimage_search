@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Website</title>
+    <style>
+        /* Style for the container with white textured background */
+        body {
+            background-color: #f5f5f5; /* Light gray background */
+            background-image: url('https://www.transparenttextures.com/patterns/white-diamond.png'); /* Texture */
+        }
+
+        /* Style for the container */
+        .container {
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Stylish underline for the headline */
+        h1 {
+            text-align: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 36px;
+            font-weight: bold;
+            color: #333;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        h1::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 3px;
+            background-color: #8a2be2; /* Purple color */
+            margin: 10px auto;
+        }
+
+        /* Style for the About button */
+        .about-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: navy;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Style for the modal background */
+        .modal-background {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+            z-index: 1;
+        }
+
+        /* Style for the modal content */
+        .modal-content {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            z-index: 2;
+        }
+
+        /* Style for the close button */
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+
+        /* Purple graded color for query and result buttons */
+        .query-button, .results-button {
+            background: linear-gradient(45deg, #8a2be2, #4b0082);
+        }
+
+        /* Button hover effect */
+        .query-button:hover, .results-button:hover {
+            opacity: 0.8;
+        }
+
+        /* Style for the image */
+        .image-container {
+            float: left;
+            width: 27%;
+            margin-right: 20px;
+        }
+
+        .image-container img {
+            width: 100%;
+            display: block;
+        }
+
+        /* Style for the text content */
+        .text-content {
+            float: left;
+            width: 70%;
+            border-left: 2px solid #4b0082; /* Blue vertical line */
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PESMCOE Search Engine</h1>
+        <hr color : "Blue">
+        <div class="image-container">
+            <!-- Add your image here -->
+            <img src="https://i.pinimg.com/originals/9a/26/72/9a2672dc38dded8fa9bfbeed3f6512bd.jpg" alt="Your Image">
+        </div>
+        <div class="text-content">
+            <form method="POST" enctype="multipart/form-data">
+                <input type="file" name="query_img" onchange="updateDescription(this)"><br>
+                <input type="text" id="img_description" name="img_description" placeholder="Image description" readonly><br>
+                <input type="submit" class="query-button">
+            </form>
+            <h2>Query:</h2>
+            {% if query_path %}
+            <img src="{{ query_path }}" width="300px">
+            {% endif %}
+            {% if img_description %}
+            <p>{{ img_description }}</p>
+            {% endif %}
+            <h2>Results:</h2>
+            {% for score in scores %}
+            <figure style="float: left; margin-right: 20px; margin-bottom: 20px;">
+                <img src="{{ score[1] }}" height="200px">
+                <figcaption>{{ score[0] }}</figcaption>
+            </figure>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- About button -->
+    <button class="about-button" onclick="openModal()">About</button>
+
+    <!-- Modal background -->
+    <div class="modal-background" onclick="closeModal()"></div>
+
+    <!-- Modal content -->
+    <div class="modal-content" id="modal">
+        <span class="close-button" onclick="closeModal()">X</span>
+        <h2>About</h2>
+        <p>"Discover the power of visuals with our innovative reverse image search tool, crafted by the creative minds of <h2>***Team Members***</h2>
+    
+    <ul>
+        <li><h4>Sahil D Wanjare</h4></li>
+        <li><h4>Suraj Sakhare</h4></li>
+        <li><h4>Vaibhav Suryawanshi</h4></li>
+        <li><h4>Kshitij Sali</h4></li>
+        <li><h4>Soham Savant</h4></li>
+    </ul> from <b>PESMCOE</b>. Dive into a world where images speak louder than words, guided by the insightful expertise of <b>Bhavna Chaudhari mam</b>. Uncover the stories behind every image effortlessly, whether it's for research, inspiration, or curiosity. Explore the endless possibilities of visual discovery with us today!" </p>
+    </div>
+
+    <!-- JavaScript to open and close the modal -->
+    <script>
+        function openModal() {
+            document.getElementById('modal').style.display = 'block';
+            document.querySelector('.modal-background').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            document.querySelector('.modal-background').style.display = 'none';
+        }
+
+        function updateDescription(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    document.getElementById('img_description').value = "File name: " + input.files[0].name + ", File size: " + input.files[0].size + " bytes";
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+</body>
+</html>
